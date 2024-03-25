@@ -17,27 +17,27 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<Item> getByUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getByUser(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("Get items for user {}", userId);
         return itemService.getItemsByUser(userId);
     }
 
     @PostMapping
-    public Item add(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
                     @Valid @RequestBody ItemDto item) {
         log.info("Add item for user {}", userId);
         return itemService.addNewItem(userId, item);
     }
 
     @GetMapping("/{id}")
-    public Item getById(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto getById(@RequestHeader("X-Sharer-User-Id") long userId,
                         @PathVariable("id") long id) {
         log.info("Get item by id {}", id);
         return itemService.getItem(userId, id);
     }
 
     @PatchMapping("/{id}")
-    public Item edit(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto edit(@RequestHeader("X-Sharer-User-Id") long userId,
                      @PathVariable("id") long id,
                      @RequestBody ItemDto item) {
         log.info("Edit item by id {}", id);
@@ -45,7 +45,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> searchItemsByKeyword(@RequestParam("text") String keyword) {
+    public List<ItemDto> searchItemsByKeyword(@RequestParam("text") String keyword) {
         log.info("Search items by keyword {}", keyword);
         return itemService.searchItemsByKeyword(keyword);
     }

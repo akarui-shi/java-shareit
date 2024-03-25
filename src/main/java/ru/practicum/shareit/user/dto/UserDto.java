@@ -7,6 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class UserDto {
+    private long id;
     @NotEmpty
     @Email(message = "Неверный формат email")
     private String email;

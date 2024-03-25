@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class ItemDto {
+    private long id;
     @NotEmpty
     private String name;
     @NotEmpty

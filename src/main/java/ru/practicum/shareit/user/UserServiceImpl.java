@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.DuplicateEmailException;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,28 +15,28 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User save(UserDto user) {
+    public UserDto save(UserDto user) {
         if (userRepository.findByEmail(user.getEmail()) == null) {
-            return userRepository.save(UserMapper.fromDto(user));
+            return UserMapper.toDto(userRepository.save(UserMapper.fromDto(user)));
         }
         throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists");
     }
 
     @Override
-    public User get(long id) {
-        return userRepository.findById(id);
+    public UserDto get(long id) {
+        return UserMapper.toDto(userRepository.findById(id));
     }
 
     @Override
-    public User update(long id, UserDto user) {
+    public UserDto update(long id, UserDto user) {
         if (userRepository.findById(id) != null) {
             if (user.getEmail() != null) {
                 if (user.getEmail().equals(userRepository.findById(id).getEmail())) {
-                    return userRepository.update(id, UserMapper.fromDto(user));
+                    return UserMapper.toDto(userRepository.update(id, UserMapper.fromDto(user)));
                 } else if (userRepository.findByEmail(user.getEmail()) == null) {
-                    return userRepository.update(id, UserMapper.fromDto(user));
+                    return UserMapper.toDto(userRepository.update(id, UserMapper.fromDto(user)));
                 } else throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists");
-            } else return userRepository.update(id, UserMapper.fromDto(user));
+            } else return UserMapper.toDto(userRepository.update(id, UserMapper.fromDto(user)));
         }
         throw new NotFoundDataException("User with id " + id + " not found");
     }
@@ -46,7 +47,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<User> getAll() {
-        return userRepository.findAll();
+    public Collection<UserDto> getAll() {
+        return userRepository.findAll().stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
