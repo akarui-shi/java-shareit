@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dto;
 
 import lombok.Data;
 
@@ -6,10 +6,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class User {
+public class UserDto {
     private long id;
-    private String name;
     @NotEmpty
     @Email(message = "Неверный формат email")
     private String email;
+    private String name;
 }
