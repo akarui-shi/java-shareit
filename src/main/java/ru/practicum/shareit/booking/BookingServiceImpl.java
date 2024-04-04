@@ -95,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
                     break;
                 case "CURRENT" :
-                    bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now());
+                    bookings = bookingRepository.findAllByBookerIdAndTimeRangeOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now());
                     break;
                 case "PAST" :
                     bookings = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
@@ -128,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
                     break;
                 case "CURRENT" :
-                    bookings = bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now());
+                    bookings = bookingRepository.findAllByOwnerIdAndTimeRangeOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now());
                     break;
                 case "PAST" :
                     bookings = bookingRepository.findAllByItemOwnerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
