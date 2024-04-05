@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
         }
-        throw new NotFoundDataException("User with id "  + id + " not found");
     }
 
     @Override

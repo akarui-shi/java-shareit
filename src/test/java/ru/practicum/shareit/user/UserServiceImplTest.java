@@ -71,6 +71,16 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void updateUserNotFoundUserExceptionTest() {
+        long userId = 1L;
+        UserDto toUpdateUserDto = UserDto.builder().name("user-updated").email("updated@yandex.ru").build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> userService.update(userId, toUpdateUserDto));
+    }
+
+    @Test
     void getAllUsersTest() {
         long userId = 1;
         User user = User.builder().id(userId).name("user").email("user@yandex.ru").build();
@@ -94,14 +104,6 @@ public class UserServiceImplTest {
         UserDto actualUserDto = userService.get(userId);
 
         assertThat(actualUserDto, equalTo(expectedUserDto));
-    }
-
-    @Test
-    void agetUserByIdNotFoundExceptionTest() {
-        long userId = 1L;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundDataException.class, () -> userService.delete(userId));
     }
 
 }
