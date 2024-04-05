@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ItemRequestMapperTest {
 
     @Test
-    void ItemRequestToDtoTest() {
+    void itemRequestToDtoTest() {
         User requester = User.builder().id(2L).name("requester").email("requester@yandex.ru").build();
         ItemRequest itemRequest = ItemRequest.builder()
                 .id(1L)
@@ -37,7 +37,7 @@ public class ItemRequestMapperTest {
     }
 
     @Test
-    void ItemRequestFromDtoTest() {
+    void itemRequestFromDtoTest() {
         User requester = User.builder().id(2L).name("requester").email("requester@yandex.ru").build();
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .description("request")

@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -15,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class CommentMapperTest {
 
     @Test
-    void CommentToDtoTest() {
+    void commentToDtoTest() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User commenter = User.builder().id(2L).name("commenter").email("commenter@yandex.ru").build();
         LocalDateTime createdTime = LocalDateTime.now();
@@ -46,7 +45,7 @@ public class CommentMapperTest {
     }
 
     @Test
-    void CommentFromDtoTest() {
+    void commentFromDtoTest() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User commenter = User.builder().id(2L).name("commenter").email("commenter@yandex.ru").build();
         LocalDateTime createdTime = LocalDateTime.now();

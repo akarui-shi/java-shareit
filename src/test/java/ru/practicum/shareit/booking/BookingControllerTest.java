@@ -247,7 +247,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void InvalidDateExeptionTest() throws Exception {
+    void invalidDateExeptionTest() throws Exception {
         long bookerId = 2L;
 
         when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
@@ -263,7 +263,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void NotFoundDataExceptionTest() throws Exception {
+    void notFoundDataExceptionTest() throws Exception {
         long bookerId = 2L;
 
         when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
@@ -279,7 +279,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void NotBookingRelationExceptionTest() throws Exception {
+    void notBookingRelationExceptionTest() throws Exception {
         long bookerId = 2L;
 
         when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))

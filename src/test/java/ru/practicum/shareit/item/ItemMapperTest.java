@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ItemMapperTest {
 
     @Test
-    void ItemToDtoTest() {
+    void itemToDtoTest() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         Item item1 = Item.builder()
                 .id(1L)
@@ -34,7 +34,7 @@ public class ItemMapperTest {
     }
 
     @Test
-    void ItemFromDtoTest() {
+    void itemFromDtoTest() {
         ItemDto itemDto1 = ItemDto.builder()
                 .id(1L)
                 .name("item1")

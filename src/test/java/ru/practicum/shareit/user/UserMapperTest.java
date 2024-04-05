@@ -3,15 +3,13 @@ package ru.practicum.shareit.user;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class UserMapperTest {
 
     @Test
-    void UserToDtoTest() {
+    void userToDtoTest() {
         User user = User.builder().id(1L).name("user").email("user@yandex.ru").build();
         UserDto expectedUserDto = UserDto.builder().id(1L).name("user").email("user@yandex.ru").build();
         UserDto actualUserDto = UserMapper.toDto(user);
@@ -20,7 +18,7 @@ public class UserMapperTest {
     }
 
     @Test
-    void UserFromDtoTest() {
+    void userFromDtoTest() {
         UserDto userDto1 = UserDto.builder().id(1L).name("user").email("user@yandex.ru").build();
         UserDto userDto2 = UserDto.builder().name("user").email("user@yandex.ru").build();
         User expectedUser1 = User.builder().id(1L).name("user").email("user@yandex.ru").build();

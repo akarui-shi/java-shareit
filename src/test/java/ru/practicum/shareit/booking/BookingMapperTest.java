@@ -10,14 +10,13 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class BookingMapperTest {
     @Test
-    void BookingToDtoTest1() {
+    void bookingToDtoTest1() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
         Item item = Item.builder()
@@ -56,7 +55,7 @@ public class BookingMapperTest {
     }
 
     @Test
-    void BookingFromDtoTest2() {
+    void bookingFromDtoTest2() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
         Item item = Item.builder()
@@ -91,7 +90,7 @@ public class BookingMapperTest {
     }
 
     @Test
-    void BookingToDtoTest() {
+    void bookingToDtoTest() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
         Item item = Item.builder()

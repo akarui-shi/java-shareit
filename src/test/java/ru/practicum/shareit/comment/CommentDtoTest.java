@@ -21,7 +21,7 @@ public class CommentDtoTest {
 
     @Test
     @DisplayName("Test: CommentDto serialization.")
-    void CommentDtoSerializationTest() throws Exception {
+    void commentDtoSerializationTest() throws Exception {
         CommentDto commentDto = CommentDto.builder()
                 .id(1L)
                 .text("comment")

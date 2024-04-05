@@ -24,7 +24,7 @@ public class ItemDtoTest {
 
     @Test
     @DisplayName("Test: ItemDto serialization.")
-    void ItemDtoTest() throws Exception {
+    void itemDtoTest() throws Exception {
         BookingItemDto lastBooking = BookingItemDto.builder()
                 .id(1L)
                 .bookerId(2L)
