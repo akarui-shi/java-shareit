@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.DuplicateEmailException;
 
@@ -93,6 +94,14 @@ public class UserServiceImplTest {
         UserDto actualUserDto = userService.get(userId);
 
         assertThat(actualUserDto, equalTo(expectedUserDto));
+    }
+
+    @Test
+    void agetUserByIdNotFoundExceptionTest() {
+        long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> userService.delete(userId));
     }
 
 }

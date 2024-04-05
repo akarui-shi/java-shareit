@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -64,6 +66,19 @@ public class ItemRequestServiceImplTest {
 
         assertThat(actualItemRequestDto, equalTo(expectedItemRequestDto));
         verify(itemRequestRepository, times(1)).save(any(ItemRequest.class));
+    }
+
+    @Test
+    void addItemRequestNotFoundExceptionTest() {
+        long requesterId = 2L;
+        ItemRequestDto newItemRequestDto = ItemRequestDto.builder()
+                .description("description")
+                .requester(requesterId)
+                .build();
+
+        when(userRepository.findById(requesterId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> itemRequestService.addItemRequest(requesterId, newItemRequestDto));
     }
 
     @Test
@@ -114,7 +129,16 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    void getItemRequestsAllButOwnerTest() {
+    void getItemRequestsByOwnerNotFoundExceptionTest() {
+        long requesterId = 2L;
+
+        when(userRepository.findById(requesterId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> itemRequestService.getItemRequestsByOwner(requesterId));
+    }
+
+    @Test
+    void getItemRequestsAllByOwnerTest() {
         long ownerId = 1L;
         long requesterId = 2L;
         long userId = 3L;
@@ -165,6 +189,16 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
+    void getItemRequestsAllByOwnerNotFoundExceptionTest() {
+        long requesterId = 2L;
+        long from = 0;
+        long size = 10;
+        when(userRepository.findById(requesterId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> itemRequestService.getItemRequestsAllByOwner(requesterId, from, size));
+    }
+
+    @Test
     void getItemRequestByIdTest() {
         long ownerId = 1L;
         long requesterId = 2L;
@@ -208,5 +242,14 @@ public class ItemRequestServiceImplTest {
         ItemRequestDto actualItemRequestDto = itemRequestService.getItemRequestById(requesterId, requestId);
 
         assertThat(actualItemRequestDto, equalTo(expectedItemRequestDto));
+    }
+
+    @Test
+    void getItemRequestByIdNotFoundExceptionTest() {
+        long requesterId = 2L;
+        long requestId = 2L;
+        when(userRepository.findById(requesterId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> itemRequestService.getItemRequestById(requesterId, requestId));
     }
 }

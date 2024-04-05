@@ -55,7 +55,7 @@ public class BookingMapperTest {
     }
 
     @Test
-    void bookingFromDtoTest2() {
+    void bookingToDtoTest2() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
         Item item = Item.builder()
@@ -90,7 +90,7 @@ public class BookingMapperTest {
     }
 
     @Test
-    void bookingToDtoTest() {
+    void bookingFromDtoTest1() {
         User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
         User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
         Item item = Item.builder()
@@ -127,4 +127,44 @@ public class BookingMapperTest {
         assertThat(actualBooking.getStatus(), equalTo(expectedBooking.getStatus()));
 
     }
+
+    @Test
+    void bookingFromDtoTest2() {
+        User owner = User.builder().id(1L).name("owner").email("owner@yandex.ru").build();
+        User booker = User.builder().id(2L).name("booker").email("booker@yandex.ru").build();
+        Item item = Item.builder()
+                .id(1L)
+                .name("item")
+                .description("description")
+                .available(true)
+                .owner(owner)
+                .build();
+        BookingDto bookingDto = BookingDto.builder()
+                .id(0L)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .booker(booker)
+                .status(Status.WAITING)
+                .build();
+
+        Booking expectedBooking = Booking.builder()
+                .id(0L)
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .item(item)
+                .booker(booker)
+                .status(Status.WAITING)
+                .build();
+
+        Booking actualBooking = BookingMapper.fromDto(bookingDto, item);
+
+        assertThat(actualBooking.getId(), equalTo(expectedBooking.getId()));
+        assertThat(actualBooking.getStart(), equalTo(expectedBooking.getStart()));
+        assertThat(actualBooking.getEnd(), equalTo(expectedBooking.getEnd()));
+        assertThat(actualBooking.getItem().getId(), equalTo(expectedBooking.getItem().getId()));
+        assertThat(actualBooking.getBooker().getId(), equalTo(expectedBooking.getBooker().getId()));
+        assertThat(actualBooking.getStatus(), equalTo(expectedBooking.getStatus()));
+
+    }
+
 }

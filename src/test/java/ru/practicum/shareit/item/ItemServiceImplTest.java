@@ -15,6 +15,7 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.NoFinishBookingForCommentException;
+import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -119,6 +120,23 @@ public class ItemServiceImplTest {
 
         assertThat(actualItemDto, equalTo(expectedItemDto));
         verify(itemRepository, times(1)).save(any(Item.class));
+    }
+
+    @Test
+    void addItemNotFoundUserExceptionTest() {
+        long userId = 1L;
+        long requestId = 1L;
+        ItemDto expectedItemDto = ItemDto.builder()
+                .id(1L)
+                .name("item")
+                .description("description")
+                .available(true)
+                .requestId(requestId)
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> itemService.addNewItem(userId, expectedItemDto));
     }
 
     @Test

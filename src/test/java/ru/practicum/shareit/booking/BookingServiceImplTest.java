@@ -16,6 +16,7 @@ import ru.practicum.shareit.booking.exeption.NotBookingRelationException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
@@ -136,6 +137,38 @@ public class BookingServiceImplTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
         assertThrows(AccessItemDeniedException.class, () -> bookingService.addBooking(bookerId, newBookingDto));
+    }
+
+    @Test
+    void addBookingNotFoundUserException() {
+        long bookerId = 2L;
+        long itemId = 1L;
+        NewBookingDto newBookingDto = NewBookingDto.builder()
+                .itemId(itemId)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        when(userRepository.findById(bookerId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.addBooking(bookerId, newBookingDto));
+    }
+
+    @Test
+    void addBookingNotFoundItemException() {
+        long bookerId = 2L;
+        long itemId = 1L;
+        User booker = User.builder().id(bookerId).name("user2").email("user2@yandex.ru").build();
+        NewBookingDto newBookingDto = NewBookingDto.builder()
+                .itemId(itemId)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.addBooking(bookerId, newBookingDto));
     }
 
     @Test
@@ -286,6 +319,18 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void getAllBookingsByUserNotFoundUserTest() {
+        long bookerId = 2L;
+        String state = "ALL";
+        long from = 0;
+        long size = 10;
+
+        when(userRepository.findById(bookerId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.getAllBookingsByUser(bookerId, state, from, size));
+    }
+
+    @Test
     void getAllBookingsByUser_whenStateInvalid_thenExceptionThrown() {
         long bookerId = 2L;
         String state = "SOME";
@@ -353,5 +398,43 @@ public class BookingServiceImplTest {
         assertThrows(InvalidStateException.class,
                 () -> bookingService.getAllBookingsAllItemsByOwner(ownerId, state, from, size));
     }
+
+    @Test
+    void getAllBookingsAllItemsByOwnerNotFoundUserException() {
+        long ownerId = 1L;
+        String state = "ALL";
+        long from = 0;
+        long size = 10;
+
+        when(userRepository.findById(ownerId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.getAllBookingsAllItemsByOwner(ownerId, state, from, size));
+    }
+
+    @Test
+    void getBookingByIdNotFoundUserException() {
+        long bookerId = 1L;
+        long bookingId = 1L;
+        when(userRepository.findById(bookerId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.getBookingById(bookerId, bookingId));
+    }
+
+    @Test
+    void getBookingByIdNotFoundBookingException() {
+        long bookerId = 1L;
+        long bookingId = 1L;
+        User booker = User.builder()
+                .id(bookerId)
+                .name("user2")
+                .email("user2@yandex.ru")
+                .build();
+
+        when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
+        when(bookingRepository.findById(bookingId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundDataException.class, () -> bookingService.getBookingById(bookerId, bookingId));
+    }
+
 
 }
