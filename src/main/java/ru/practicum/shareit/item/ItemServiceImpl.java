@@ -14,6 +14,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.NoFinishBookingForCommentException;
 import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -29,6 +31,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public List<ItemDto> getItemsByUser(long userId) {
@@ -59,11 +62,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addNewItem(long userId, ItemDto item) {
+    public ItemDto addNewItem(long userId, ItemDto itemDto) {
         if (userRepository.findById(userId).isPresent()) {
             User owner = userRepository.findById(userId).get();
-            item.setOwner(owner);
-            return ItemMapper.toDto(itemRepository.save(ItemMapper.fromDto(item)));
+            itemDto.setOwner(owner);
+            Item item = ItemMapper.fromDto(itemDto);
+            if (itemDto.getRequestId() != null) {
+                ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                        new NotFoundDataException("Request with id " + itemDto.getRequestId() + " not found"));
+                item.setRequest(itemRequest);
+            }
+            return ItemMapper.toDto(itemRepository.save(item));
         }
         throw new NotFoundDataException("User with id " + userId + " not found");
     }
