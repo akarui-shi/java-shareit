@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,6 +42,7 @@ public class BookingControllerTest {
     BookingService bookingService;
 
     @Test
+    @DisplayName("Добавление бронирования")
     void addBookingTest() throws Exception {
         long itemId = 1L;
         long bookerId = 2L;
@@ -86,6 +88,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Ошибка добавления бронирования")
     void addBooking_InvalidStartEndDatesExceptionTest() throws Exception {
         long bookerId = 2L;
 
@@ -102,6 +105,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Ошибка добавления бронирования")
     void updateTest() throws Exception {
         long bookingId = 1L;
         long ownerId = 1L;
@@ -141,6 +145,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Ошибка обновления бронирования")
     void getBookingByIdTest() throws Exception {
         long bookingId = 1L;
         long ownerId = 1L;
@@ -180,6 +185,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Получение всех бронирований пользователя")
     void getAllBookingsByUserTest() throws Exception {
         long bookerId = 2L;
         long itemId = 1L;
@@ -221,6 +227,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Получение всех бронирований всех вещей")
     void getAllBookingsAllItemsByOwnerTest() throws Exception {
         long ownerId = 1L;
         long bookerId = 2L;
@@ -264,7 +271,8 @@ public class BookingControllerTest {
     }
 
     @Test
-    void invalidDateExeptionTest() throws Exception {
+    @DisplayName("Некорректная дата бронирования")
+    void invalidDateExceptionTest() throws Exception {
         long bookerId = 2L;
 
         when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
@@ -280,6 +288,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Не найден пользователь")
     void notFoundDataExceptionTest() throws Exception {
         long bookerId = 2L;
 
@@ -296,6 +305,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Ошибка при добавлении бронирования")
     void notBookingRelationExceptionTest() throws Exception {
         long bookerId = 2L;
 
@@ -312,6 +322,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Ошибка при получении бронирования")
     void getAllBookingsByCurrentUser_InvalidStateExceptionTest() throws Exception {
         long bookerId = 2L;
         String state = "ALL";
@@ -327,5 +338,22 @@ public class BookingControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    @Test
+    @DisplayName("Некорректные параметры пагинации")
+    void invalidPaginationParametersTest() throws Exception {
+        long bookerId = 2L;
+        NewBookingDto bookingDto = NewBookingDto.builder()
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusHours(1))
+                .build();
+
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", bookerId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 
 }

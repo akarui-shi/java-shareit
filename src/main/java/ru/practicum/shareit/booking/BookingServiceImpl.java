@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.exeption.*;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
@@ -72,6 +74,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto getBookingById(long bookingId, long userId) {
         if (userRepository.findById(userId).isPresent()) {
             if (bookingRepository.findById(bookingId).isPresent()) {
@@ -88,6 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getAllBookingsByUser(long userId, String state, long from, long size) {
         if (userRepository.findById(userId).isPresent()) {
             List<Booking> bookings;
@@ -122,6 +126,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getAllBookingsAllItemsByOwner(long userId, String state, long from, long size) {
         if (userRepository.findById(userId).isPresent()) {
             List<Booking> bookings;

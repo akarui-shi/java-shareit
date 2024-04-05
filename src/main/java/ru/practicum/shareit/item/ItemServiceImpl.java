@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
@@ -34,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsByUser(long userId) {
         if (userRepository.findById(userId).isPresent()) {
             List<ItemDto> items = itemRepository.findAllByOwnerId(userId).stream()
@@ -78,6 +81,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItem(long userId, long id) {
         if (userRepository.findById(userId).isPresent() && itemRepository.findById(id).isPresent()) {
             Item item = itemRepository.findById(id).get();
@@ -124,6 +128,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> searchItemsByKeyword(String keyword) {
         if (keyword.isBlank()) {
             return List.of();

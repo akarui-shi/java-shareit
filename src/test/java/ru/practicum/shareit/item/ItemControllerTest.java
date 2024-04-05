@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -290,6 +291,25 @@ public class ItemControllerTest {
 
         mvc.perform(post("/items/{itemId}/comment", itemId)
                         .content(mapper.writeValueAsString(commentDtoIn))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Некорректное описание элемента")
+    void invalidDescriptionTest() throws Exception {
+        long userId = 1L;
+        ItemDto itemDtoIn = ItemDto.builder()
+                .name("Test Item")
+                .description("")
+                .available(true)
+                .build();
+
+        mvc.perform(post("/items")
+                        .content(mapper.writeValueAsString(itemDtoIn))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
