@@ -287,8 +287,6 @@ public class ItemServiceImplTest {
     void getAllItemsByUserIdTest() {
         long userId = 1;
         long itemId = 1;
-        long from = 0;
-        long size = 10;
         User owner = User.builder()
                 .id(userId)
                 .name("user")

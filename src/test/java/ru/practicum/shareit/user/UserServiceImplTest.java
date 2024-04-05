@@ -5,7 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.exception.DuplicateEmailException;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,12 +15,12 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
-
     @Mock
     UserRepository userRepository;
 
@@ -38,6 +40,16 @@ public class UserServiceImplTest {
 
         assertThat(actualUserDto, equalTo(expectedUserDto));
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void addUserDuplicateEmailExceptionTest() {
+        UserDto newUserDto = UserDto.builder().name("user").email("user@yandex.ru").build();
+
+        when(userRepository.save(any(User.class)))
+                .thenThrow(new DataIntegrityViolationException("Database error."));
+
+        assertThrows(DuplicateEmailException.class, () -> userService.save(newUserDto));
     }
 
     @Test
