@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
@@ -14,6 +15,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.NoFinishBookingForCommentException;
 import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -23,14 +26,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsByUser(long userId) {
         if (userRepository.findById(userId).isPresent()) {
             List<ItemDto> items = itemRepository.findAllByOwnerId(userId).stream()
@@ -59,16 +65,23 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addNewItem(long userId, ItemDto item) {
+    public ItemDto addNewItem(long userId, ItemDto itemDto) {
         if (userRepository.findById(userId).isPresent()) {
             User owner = userRepository.findById(userId).get();
-            item.setOwner(owner);
-            return ItemMapper.toDto(itemRepository.save(ItemMapper.fromDto(item)));
+            itemDto.setOwner(owner);
+            Item item = ItemMapper.fromDto(itemDto);
+            if (itemDto.getRequestId() != null) {
+                ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                        new NotFoundDataException("Request with id " + itemDto.getRequestId() + " not found"));
+                item.setRequest(itemRequest);
+            }
+            return ItemMapper.toDto(itemRepository.save(item));
         }
         throw new NotFoundDataException("User with id " + userId + " not found");
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItem(long userId, long id) {
         if (userRepository.findById(userId).isPresent() && itemRepository.findById(id).isPresent()) {
             Item item = itemRepository.findById(id).get();
@@ -115,6 +128,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> searchItemsByKeyword(String keyword) {
         if (keyword.isBlank()) {
             return List.of();

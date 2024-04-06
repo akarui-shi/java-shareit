@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.DuplicateEmailException;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto get(long id) {
         return UserMapper.toDto(userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundDataException("User with id "  + id + " not found")));
@@ -55,6 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<UserDto> getAll() {
         return userRepository.findAll().stream()
                 .map(UserMapper::toDto)
