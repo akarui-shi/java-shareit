@@ -326,7 +326,7 @@ public class ItemServiceImplTest {
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(owner));
-        when(itemRepository.findAllByOwnerId(eq(userId))).thenReturn(List.of(item));
+        when(itemRepository.findAllByOwnerIdOrderById(eq(userId))).thenReturn(List.of(item));
         when(commentRepository.findAllByItemId(any(Long.class))).thenReturn(List.of());
 
         List<ItemDto> actualList = itemService.getItemsByUser(userId);

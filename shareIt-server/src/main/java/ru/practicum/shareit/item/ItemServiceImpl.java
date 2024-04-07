@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     public List<ItemDto> getItemsByUser(long userId) {
         if (userRepository.findById(userId).isPresent()) {
-            List<ItemDto> items = itemRepository.findAllByOwnerId(userId).stream()
+            List<ItemDto> items = itemRepository.findAllByOwnerIdOrderById(userId).stream()
                     .map(ItemMapper::toDto)
                     .collect(Collectors.toList());
             for (ItemDto item : items) {
