@@ -49,7 +49,7 @@ public class BookingClient extends BaseClient {
     public ResponseEntity<Object> getAllBookingsByUser(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
         if (!statuses.contains(state)) {
-            throw new InvalidStateException("Wrong status");
+            throw new InvalidStateException("Unknown state: UNSUPPORTED_STATUS");
         }
         Map<String, Object> parameters = Map.of(
                 "state", state,
@@ -61,7 +61,7 @@ public class BookingClient extends BaseClient {
     public ResponseEntity<Object> getAllBookingsAllItemsByOwner(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
         if (!statuses.contains(state)) {
-            throw new InvalidStateException("Wrong status");
+            throw new InvalidStateException("Unknown state: UNSUPPORTED_STATUS");
         }
         Map<String, Object> parameters = Map.of(
                 "state", state,
