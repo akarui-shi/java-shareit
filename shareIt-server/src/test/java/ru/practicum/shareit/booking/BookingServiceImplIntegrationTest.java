@@ -21,7 +21,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(properties = "db.name=admin", webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -99,29 +98,6 @@ public class BookingServiceImplIntegrationTest {
         assertThat(actualBookingDto.getItem().getId(), equalTo(expectedBookingDto.getItem().getId()));
         assertThat(actualBookingDto.getItem().getName(), equalTo(expectedBookingDto.getItem().getName()));
         assertThat(actualBookingDto.getBooker().getId(), equalTo(expectedBookingDto.getBooker().getId()));
-    }
-
-
-    @Test
-    void addBookingThenExceptionThrown() {
-        NewBookingDto newBookingDto = NewBookingDto.builder()
-                .itemId(item.getId())
-                .end(LocalDateTime.now().plusDays(2))
-                .build();
-
-        assertThrows(NullPointerException.class,
-                () -> bookingService.addBooking(user2.getId(), newBookingDto));
-    }
-
-    @Test
-    void addBooking_whenEndNull_thenExceptionThrown() {
-        NewBookingDto newBookingDto = NewBookingDto.builder()
-                .itemId(item.getId())
-                .start(LocalDateTime.now().plusDays(1))
-                .build();
-
-        assertThrows(NullPointerException.class,
-                () -> bookingService.addBooking(user2.getId(), newBookingDto));
     }
 
     @Test

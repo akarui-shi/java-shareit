@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.exception.InvalidDateExeption;
+import ru.practicum.shareit.booking.exception.InvalidStateException;
 
 @RestControllerAdvice
 @Slf4j
@@ -25,4 +27,17 @@ public class ErrorHandler {
         return new ErrorResponse(exception.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidStateException(InvalidStateException exception) {
+        log.warn("{}", exception.getMessage());
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerInvalidDateExeption(final InvalidDateExeption exception) {
+        log.warn("{}", exception.getMessage());
+        return new ErrorResponse(exception.getMessage());
+    }
 }

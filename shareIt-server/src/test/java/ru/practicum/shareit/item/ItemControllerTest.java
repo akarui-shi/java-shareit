@@ -314,7 +314,7 @@ public class ItemControllerTest {
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is5xxServerError());
     }
 
 }

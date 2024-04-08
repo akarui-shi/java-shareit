@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.exeption.AccessItemDeniedException;
-import ru.practicum.shareit.booking.exeption.InvalidStateException;
 import ru.practicum.shareit.booking.exeption.NoWaitingStatusException;
 import ru.practicum.shareit.booking.exeption.NotBookingRelationException;
 import ru.practicum.shareit.booking.model.Booking;
@@ -331,20 +330,6 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllBookingsByUser_whenStateInvalid_thenExceptionThrown() {
-        long bookerId = 2L;
-        String state = "SOME";
-        long from = 0;
-        long size = 10;
-
-        User booker = User.builder().id(bookerId).name("user2").email("user2@yandex.ru").build();
-        when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
-
-        assertThrows(InvalidStateException.class,
-                () -> bookingService.getAllBookingsByUser(bookerId, state, from, size));
-    }
-
-    @Test
     void getAllBookingsAllItemsByOwner_whenInputValid_thenReturnedListOfDto() {
         long ownerId = 1L;
         long bookerId = 2L;
@@ -384,19 +369,6 @@ public class BookingServiceImplTest {
         List<BookingDto> actualList = bookingService.getAllBookingsAllItemsByOwner(ownerId, state, from, size);
 
         assertThat(actualList, equalTo(List.of(expectedBookingDto)));
-    }
-
-    @Test
-    void getAllBookingsAllItemsByOwner_whenStateInvalid_thenExceptionThrown() {
-        long ownerId = 1L;
-        String state = "SOME";
-        long from = 0;
-        long size = 10;
-
-        User owner = User.builder().id(ownerId).name("user1").email("user1@yandex.ru").build();
-        when(userRepository.findById(ownerId)).thenReturn(Optional.of(owner));
-        assertThrows(InvalidStateException.class,
-                () -> bookingService.getAllBookingsAllItemsByOwner(ownerId, state, from, size));
     }
 
     @Test

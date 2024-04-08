@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.exeption;
+package ru.practicum.shareit.booking.exception;
 
 public class InvalidDateExeption extends RuntimeException {
     public InvalidDateExeption(String message) {

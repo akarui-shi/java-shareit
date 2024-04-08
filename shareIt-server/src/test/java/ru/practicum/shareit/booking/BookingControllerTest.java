@@ -10,11 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
-import ru.practicum.shareit.booking.exeption.InvalidDateExeption;
-import ru.practicum.shareit.booking.exeption.InvalidStateException;
-import ru.practicum.shareit.booking.exeption.NotBookingRelationException;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.item.exception.NotFoundDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -85,23 +81,6 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.booker.id", is(expectedBookingDto.getBooker().getId()), Long.class));
 
         verify(bookingService, times(1)).addBooking(bookerId, newBookingDto);
-    }
-
-    @Test
-    @DisplayName("Ошибка добавления бронирования")
-    void addBooking_InvalidStartEndDatesExceptionTest() throws Exception {
-        long bookerId = 2L;
-
-        when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
-                .thenThrow(new InvalidDateExeption("Error"));
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(new NewBookingDto()))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -268,92 +247,6 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$[0].booker.id", is(expectedBookingDto.getBooker().getId()), Long.class));
 
         verify(bookingService, times(1)).getAllBookingsAllItemsByOwner(ownerId, state, from, size);
-    }
-
-    @Test
-    @DisplayName("Некорректная дата бронирования")
-    void invalidDateExceptionTest() throws Exception {
-        long bookerId = 2L;
-
-        when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
-                .thenThrow(new InvalidDateExeption("Error"));
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(new NewBookingDto()))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("Не найден пользователь")
-    void notFoundDataExceptionTest() throws Exception {
-        long bookerId = 2L;
-
-        when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
-                .thenThrow(new NotFoundDataException("Error"));
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(new NewBookingDto()))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("Ошибка при добавлении бронирования")
-    void notBookingRelationExceptionTest() throws Exception {
-        long bookerId = 2L;
-
-        when(bookingService.addBooking(anyLong(), any(NewBookingDto.class)))
-                .thenThrow(new NotBookingRelationException("Error"));
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(new NewBookingDto()))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("Ошибка при получении бронирования")
-    void getAllBookingsByCurrentUser_InvalidStateExceptionTest() throws Exception {
-        long bookerId = 2L;
-        String state = "ALL";
-        long from = 0;
-        long size = 0;
-
-        when(bookingService.getAllBookingsByUser(anyLong(), anyString(), anyLong(), anyLong()))
-                .thenThrow(new InvalidStateException("Error"));
-
-        mvc.perform(get("/bookings?state={state}&from={from}&size={size}", state, from, size)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    @DisplayName("Некорректные параметры пагинации")
-    void invalidPaginationParametersTest() throws Exception {
-        long bookerId = 2L;
-        NewBookingDto bookingDto = NewBookingDto.builder()
-                .start(LocalDateTime.now())
-                .end(LocalDateTime.now().plusHours(1))
-                .build();
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", bookerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
 }

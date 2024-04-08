@@ -15,6 +15,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,10 +38,8 @@ public class BookingServiceImpl implements BookingService {
                             + item.getId() + ") because he doesn't own it");
                 }
                 if (item.getAvailable()) {
-                    if (isDateValid(bookingDto)) {
-                            bookingDto.setStatus(Status.WAITING);
-                        return BookingMapper.toDto(bookingRepository.save(BookingMapper.fromDto(bookingDto, item)));
-                    } else throw new InvalidDateExeption("Invalid date");
+                    bookingDto.setStatus(Status.WAITING);
+                    return BookingMapper.toDto(bookingRepository.save(BookingMapper.fromDto(bookingDto, item)));
                 } else throw new AccessItemDeniedException("Item not available");
             }
             throw new NotFoundDataException("Item with id " + bookingDto.getItemId() + " not found");
@@ -116,7 +115,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageRequest);
                     break;
                 default:
-                    throw new InvalidStateException("Unknown state: " + state);
+                    bookings = Collections.emptyList();
             }
             return bookings.stream()
                     .map(BookingMapper::toDto)
@@ -151,20 +150,12 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageRequest);
                     break;
                 default:
-                    throw new InvalidStateException("Unknown state: " + state);
+                    bookings = Collections.emptyList();
             }
             return bookings.stream()
                     .map(BookingMapper::toDto)
                     .collect(Collectors.toList());
         }
         throw new NotFoundDataException("User with id " + userId + " not found");
-    }
-
-    private boolean isDateValid(NewBookingDto bookingDto) {
-        if (bookingDto.getStart().isEqual(bookingDto.getEnd())
-                || bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            return false;
-        }
-        return true;
     }
 }

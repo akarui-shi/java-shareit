@@ -7,16 +7,20 @@ import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.shareit.booking.exception.InvalidDateExeption;
+import ru.practicum.shareit.booking.exception.InvalidStateException;
 import ru.practicum.shareit.booking.model.NewBookingDto;
 import ru.practicum.shareit.client.BaseClient;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class BookingClient extends BaseClient {
     private static final String API_PREFIX = "/bookings";
+    List<String> statuses = List.of("ALL", "CURRENT", "PAST", "FUTURE", "WAITING", "REJECTED");
 
     @Autowired
     public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -27,7 +31,9 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> addBooking(long userId, NewBookingDto newBookingDto) {
-        return post("/", userId, newBookingDto);
+        if (isDateValid(newBookingDto)) {
+            return post("/", userId, newBookingDto);
+        } else throw new InvalidDateExeption("Invalid date");
     }
 
     public ResponseEntity<Object> update(long bookingId, long userId, boolean approved) {
@@ -42,6 +48,9 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getAllBookingsByUser(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
+        if (!statuses.contains(state)){
+            throw new InvalidStateException("Wrong status");
+        }
         Map<String, Object> parameters = Map.of(
                 "state", state,
                 "from", from,
@@ -51,10 +60,21 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getAllBookingsAllItemsByOwner(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
+        if (!statuses.contains(state)){
+            throw new InvalidStateException("Wrong status");
+        }
         Map<String, Object> parameters = Map.of(
                 "state", state,
                 "from", from,
                 "size", size);
         return get("/owner/?state={state}&from={from}&size={size}", userId, parameters);
+    }
+
+    private boolean isDateValid(NewBookingDto bookingDto) {
+        if (bookingDto.getStart().isEqual(bookingDto.getEnd())
+                || bookingDto.getStart().isAfter(bookingDto.getEnd())) {
+            return false;
+        }
+        return true;
     }
 }

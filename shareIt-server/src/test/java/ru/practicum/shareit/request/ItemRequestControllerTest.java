@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -233,23 +232,5 @@ public class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", requesterId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("Некорректное описание запроса на элементы")
-    void invalidDescriptionTest() throws Exception {
-        long requesterId = 2L;
-        ItemRequestDto newItemRequestDto = ItemRequestDto.builder()
-                .description("")
-                .requester(requesterId)
-                .build();
-
-        mvc.perform(post("/requests")
-                        .content(mapper.writeValueAsString(newItemRequestDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", requesterId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 }

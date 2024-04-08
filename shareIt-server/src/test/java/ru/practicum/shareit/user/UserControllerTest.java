@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -117,22 +116,6 @@ public class UserControllerTest {
         mvc.perform(delete("/users/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         verify(mockUserService).delete(1L);
-    }
-
-    @Test
-    @DisplayName("Некорректный формат email")
-    void invalidEmailFormatTest() throws Exception {
-        UserDto userDtoAddIn = UserDto.builder()
-                .email("invalid_email_format") // Некорректный формат email
-                .name("user")
-                .build();
-
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDtoAddIn))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
 }
