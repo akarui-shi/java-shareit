@@ -48,7 +48,7 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getAllBookingsByUser(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
-        if (!statuses.contains(state)){
+        if (!statuses.contains(state)) {
             throw new InvalidStateException("Wrong status");
         }
         Map<String, Object> parameters = Map.of(
@@ -60,7 +60,7 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getAllBookingsAllItemsByOwner(
             long userId, String state, @PositiveOrZero long from, @Positive long size) {
-        if (!statuses.contains(state)){
+        if (!statuses.contains(state)) {
             throw new InvalidStateException("Wrong status");
         }
         Map<String, Object> parameters = Map.of(
